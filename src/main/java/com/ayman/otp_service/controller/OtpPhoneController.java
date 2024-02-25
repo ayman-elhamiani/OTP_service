@@ -19,6 +19,8 @@ public class OtpPhoneController {
     private final OtpSendPhoneService otpSendPhoneService;
     private final OtpCompareService otpCompareService;
 
+
+
     @Autowired
     public OtpPhoneController(OtpGenerateService otpService,
                               OtpSendPhoneService otpSendPhoneService,
@@ -31,19 +33,19 @@ public class OtpPhoneController {
     @PostMapping("/generate")
     public String generatePhoneOtp(@RequestBody OtpPhoneRequest phoneNumber) {
         String generatedOtp = otpGenerateService.generateOtp();
-        sendOtpPhone(generatedOtp, phoneNumber.getPhoneNumber() );
+//        sendOtpPhone(generatedOtp, phoneNumber.getPhoneNumber() );
         return generatedOtp;
     }
 
 
 
-    @PostMapping("/send-phone")
-    public void sendOtpPhone(@RequestParam String otp, @RequestParam String phoneNumber) {
-        otpSendPhoneService.sendOtpPhone(otp, phoneNumber);
-    }
+//    @PostMapping("/send-phone")
+//    public void sendOtpPhone(@RequestParam String otp, @RequestParam String phoneNumber) {
+//        otpSendPhoneService.sendOtpPhone(otp, phoneNumber);
+//    }
 
     @PostMapping("/compare")
-    public OtpStatus compareOtp(@RequestParam OtpPhoneRequest userInput) {
+    public Boolean compareOtp(@RequestBody OtpPhoneRequest userInput) {
         return otpCompareService.compareOtp(userInput.getUserInput());
     }
 }
