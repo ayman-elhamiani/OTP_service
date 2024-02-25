@@ -2,20 +2,28 @@ package com.ayman.otp_service.service;
 
 
 import com.ayman.otp_service.model.OtpStatus;
+import com.bastiaanjansen.otp.TOTPGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
 
 @Service
 public class OtpCompareService {
-    public Boolean compareOtp(String userInput) {
-        // Compare user input with the stored OTP
-        // Return true if they match, false otherwise
+    private OtpManager otpManager;
 
+    @Autowired
+    public OtpCompareService(OtpManager otpManager) {
+        this.otpManager = otpManager;
+    }
 
+    public Boolean compareOtp(String userInput, UUID userId) {
+        // Retrieve the stored TOTP instance for the given user
+        TOTPGenerator totp = otpManager.retrieveOtpInstance(userId);
 
-
-
-
-         boolean isCodeValid = OtpGenerateService.totp.verify(userInput);
+        // Perform OTP verification
+        boolean isCodeValid = totp.verify(userInput);
 
         return isCodeValid;
     }

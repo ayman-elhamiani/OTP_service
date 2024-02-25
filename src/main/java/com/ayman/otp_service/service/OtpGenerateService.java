@@ -10,16 +10,22 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.Duration;
+import java.util.UUID;
+
 @Service
 public class OtpGenerateService {
 
     private OtpRepository otpPhoneRepository;
-    static TOTPGenerator totp;
+    private OtpManager otpManager;
 
-    public String generateOtp(){
+    public OtpGenerateService(OtpRepository otpPhoneRepository, OtpManager otpManager) {
+        this.otpPhoneRepository = otpPhoneRepository;
+        this.otpManager = otpManager;
+    }
+    public String generateOtp( UUID userId){
         byte[] secret = SecretGenerator.generate();
 
-        this.totp = new TOTPGenerator.Builder(secret)
+        TOTPGenerator totp = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
                     builder.withPasswordLength(6);
                     builder.withAlgorithm(HMACAlgorithm.SHA256); // SHA256 and SHA512 are also supported
@@ -27,7 +33,11 @@ public class OtpGenerateService {
                 .withPeriod(Duration.ofMinutes(15))
                 .build();
 
-        String code = this.totp.now();
+        // Store the UUID along with the TOTP instance (for later verification)
+        otpManager.storeOtpInstance(userId, totp);
+
+
+        String code = totp.now();
         return (code);
     }
 
