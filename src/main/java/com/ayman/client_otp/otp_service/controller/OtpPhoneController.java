@@ -1,11 +1,10 @@
-package com.ayman.otp_service.controller;
+package com.ayman.client_otp.otp_service.controller;
 
-import com.ayman.otp_service.dto.OtpPhoneRequest;
-import com.ayman.otp_service.service.OtpCompareService;
-import com.ayman.otp_service.service.OtpManager;
-import com.ayman.otp_service.service.OtpGenerateService;
+import com.ayman.client_otp.otp_service.dto.OtpPhoneRequest;
+import com.ayman.client_otp.otp_service.service.OtpCompareService;
+import com.ayman.client_otp.otp_service.service.OtpGenerateService;
+import com.bastiaanjansen.otp.SecretGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,26 +21,27 @@ public class OtpPhoneController {
 
     private final OtpGenerateService otpGenerateService;
     private final OtpCompareService otpCompareService;
-    private final OtpManager otpManager;
 
 
 
     @Autowired
     public OtpPhoneController(OtpGenerateService otpService,
-                              OtpManager otpManager,
                               OtpCompareService otpCompareService) {
         this.otpGenerateService = otpService;
         this.otpCompareService = otpCompareService;
-        this.otpManager = otpManager;
+
     }
+
+    byte[] secretKeyBytes = SecretGenerator.generate();
 
     @PostMapping("/generate")
     public ResponseEntity<Object> generatePhoneOtp() {
-        UUID userId = otpManager.generateUuid();
-        String generatedOtp = otpGenerateService.generateOtp(userId);
-        System.out.println("User ID for the session: " + userId);
+        ///
+        UUID userId = UUID.randomUUID();
+        String generatedOtp = otpGenerateService.generateOtp(secretKeyBytes);
+
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("userId", userId.toString());
+        responseMap.put("userId", secretKeyBytes);
         responseMap.put("generatedOtp", generatedOtp);
 
         // Return the JSON object in the response body
@@ -54,7 +54,7 @@ public class OtpPhoneController {
     @PostMapping("/compare")
     public ResponseEntity<Boolean> compareOtp(@RequestBody OtpPhoneRequest otpPhoneRequest) {
         // Use the UUID associated with the user to verify the OTP
-        boolean isOtpValid = otpCompareService.compareOtp(otpPhoneRequest.getUserInput(), otpPhoneRequest.getUserId());
+        boolean isOtpValid = otpCompareService.compareOtp( otpPhoneRequest.getUserId(), otpPhoneRequest.getUserInput());
 
         return ResponseEntity.ok(isOtpValid);
     }

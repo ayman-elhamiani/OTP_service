@@ -1,4 +1,4 @@
-package com.ayman.otp_service.model;
+package com.ayman.client_otp.otp_service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

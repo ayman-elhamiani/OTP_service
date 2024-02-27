@@ -1,4 +1,4 @@
-package com.ayman.otp_service;
+package com.ayman.client_otp.otp_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

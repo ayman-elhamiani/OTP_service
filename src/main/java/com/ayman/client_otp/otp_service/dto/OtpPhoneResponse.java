@@ -1,4 +1,4 @@
-package com.ayman.otp_service.dto;
+package com.ayman.client_otp.otp_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,13 +11,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OtpPhoneRequest {
+public class OtpPhoneResponse {
 
-    private String phoneNumber;
-    private String userInput;
+    private String phoneNum;
+    private String code;
     private UUID userId;
 
 
-
-    // Constructors, getters, setters
 }

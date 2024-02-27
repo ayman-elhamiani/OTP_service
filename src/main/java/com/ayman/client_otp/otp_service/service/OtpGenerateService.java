@@ -1,29 +1,21 @@
-package com.ayman.otp_service.service;
+package com.ayman.client_otp.otp_service.service;
 
 
-import com.ayman.otp_service.dto.OtpPhoneRequest;
 import com.bastiaanjansen.otp.HMACAlgorithm;
+import com.bastiaanjansen.otp.HOTPGenerator;
 import com.bastiaanjansen.otp.SecretGenerator;
 import com.bastiaanjansen.otp.TOTPGenerator;
-import com.ayman.otp_service.repository.OtpRepository;
+import com.ayman.client_otp.otp_service.repository.OtpRepository;
 import org.springframework.stereotype.Service;
 
 
 import java.time.Duration;
-import java.util.UUID;
 
 @Service
 public class OtpGenerateService {
 
-    private OtpRepository otpPhoneRepository;
-    private OtpManager otpManager;
+    public String generateOtp( byte[] secret){
 
-    public OtpGenerateService(OtpRepository otpPhoneRepository, OtpManager otpManager) {
-        this.otpPhoneRepository = otpPhoneRepository;
-        this.otpManager = otpManager;
-    }
-    public String generateOtp( UUID userId){
-        byte[] secret = SecretGenerator.generate();
 
         TOTPGenerator totp = new TOTPGenerator.Builder(secret)
                 .withHOTPGenerator(builder -> {
@@ -34,11 +26,8 @@ public class OtpGenerateService {
                 .build();
 
         // Store the UUID along with the TOTP instance (for later verification)
-        otpManager.storeOtpInstance(userId, totp);
 
-
-        String code = totp.now();
-        return (code);
+    return totp.now();
     }
 
 
